@@ -55,13 +55,51 @@ app.post('/generate-image', async(req, res) => {
     }
 
     //init logic
-    const response = await ai.models.generateContent({
+    const response = await ai.models.generateImages({
         contents: message,
         model: geminiModels.image
     })
     
-    res.status(200).send({reply: response.images});
+    res.status(200).send({reply: response.generatedImages});
 })
+
+app.post('/generate-documents', async(req, res) => {
+    const { body } = req;
+    const { message } = body;
+
+    if(!message || typeof message !== "string") {
+        res.status(400).send("Bad request, no request payload found");
+        return;
+    }
+
+    //init logic
+    const response = await fs.readFile({
+        contents: message,
+        model: geminiModels.document
+    })
+    
+    res.status(200).send({reply: response});
+})
+
+app.post('/generate-audio', async(req, res) => {
+    const { body } = req;
+    const { message } = body;
+
+    if(!message || typeof message !== "string") {
+        res.status(400).send("Bad request, no request payload found");
+        return;
+    }
+
+    //init logic
+    const response = await ai.models.generateContent({
+        contents: message,
+        model: geminiModels.audio
+    })
+    
+    res.status(200).send({reply: response});
+})
+
+//
 
 // /**
 //  * Main function to generate content using the Gemini model.
